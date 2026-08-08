@@ -651,7 +651,7 @@ function AnalysisResult({ analysis }: { analysis: BodyAnalysis }) {
           </div>
           {analysis.recommendations.map((r) => (
             <div key={r} className={styles.feedbackItem}>
-              <span style={{ color: "var(--primary)" }}>💡</span> {r}
+              <span className="material-symbols-outlined" style={{ color: "var(--primary)", fontSize: 16 }}>lightbulb</span> {r}
             </div>
           ))}
         </div>

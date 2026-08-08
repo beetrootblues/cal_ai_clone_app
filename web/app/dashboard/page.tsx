@@ -61,10 +61,8 @@ function DoubleRing({
           <span>Calories</span>
         </div>
         <div className={styles.ringLegendItem}>
-          <div className={styles.ringLegendItem}>
-            <div className={styles.legendDot} style={{ background: "var(--accent-green)" }} />
-            <span>Protein</span>
-          </div>
+          <div className={styles.legendDot} style={{ background: "var(--accent-green)" }} />
+          <span>Protein</span>
         </div>
       </div>
     </div>
@@ -73,15 +71,15 @@ function DoubleRing({
 
 /* ─── Macro Bar ─── */
 function MacroBar({
-  label, current, target, color, emoji, unit = "g"
+  label, current, target, color, icon, unit = "g"
 }: {
-  label: string; current: number; target: number; color: string; emoji: string; unit?: string;
+  label: string; current: number; target: number; color: string; icon: string; unit?: string;
 }) {
   const pct = target > 0 ? Math.min((current / target) * 100, 100) : 0;
   return (
     <div className={styles.macroBar}>
       <div className={styles.macroBarTop}>
-        <span className={styles.macroEmoji}>{emoji}</span>
+        <span className={`material-symbols-outlined ${styles.macroIcon}`} aria-hidden="true">{icon}</span>
         <span className={styles.macroBarLabel}>{label}</span>
         <span className={styles.macroBarValue} style={{ color }}>
           {Math.round(current)}<small>{unit}</small>
@@ -302,10 +300,10 @@ export default function DashboardPage() {
                   protein={protein} proteinTarget={proteinTarget}
                 />
                 <div className={styles.macrosColumn}>
-                  <MacroBar label="Protein" current={protein} target={proteinTarget} color="var(--protein)"  emoji="🥩" />
-                  <MacroBar label="Carbs"   current={carbs}   target={carbsTarget}  color="var(--carbs)"   emoji="🌾" />
-                  <MacroBar label="Fat"     current={fat}      target={fatTarget}    color="var(--fat)"     emoji="🥑" />
-                  <MacroBar label="Burned"  current={burned}   target={600}          color="var(--primary)" emoji="🔥" unit="kcal" />
+                  <MacroBar label="Protein" current={protein} target={proteinTarget} color="var(--protein)"  icon="fitness_center" />
+                  <MacroBar label="Carbs"   current={carbs}   target={carbsTarget}  color="var(--carbs)"   icon="bakery_dining" />
+                  <MacroBar label="Fat"     current={fat}      target={fatTarget}    color="var(--fat)"     icon="egg_alt" />
+                  <MacroBar label="Burned"  current={burned}   target={600}          color="var(--primary)" icon="local_fire_department" unit="kcal" />
                 </div>
               </div>
             </div>

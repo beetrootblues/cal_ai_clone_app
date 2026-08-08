@@ -176,7 +176,7 @@ export default function ProgressPage() {
                   if (navigator.share) {
                     navigator.share({
                       title: "Cal AI Progress",
-                      text: `I'm on a ${stats?.streak || 0}-day streak on Cal AI! 🔥 Tracking my macros has never been easier.`,
+                      text: `I'm on a ${stats?.streak || 0}-day streak on Cal AI! Tracking my macros has never been easier.`,
                       url: window.location.origin,
                     }).catch(console.error);
                   } else {
@@ -187,12 +187,12 @@ export default function ProgressPage() {
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>ios_share</span>
                 Share
               </button>
-              <div className={styles.periodTabs} id="progress-period">
+              <div className={styles.periodTabs} id="progress-period" role="group" aria-label="Time range">
                 {(["today", "7d", "30d", "90d"] as Period[]).map((p) => (
                   <button
                     key={p}
                     className={`${styles.periodTab} ${period === p ? styles.periodTabActive : ""}`}
-                    onClick={() => setPeriod(p)}
+                    aria-pressed={period === p} onClick={() => setPeriod(p)}
                     id={`progress-period-${p}`}
                     style={{ textTransform: p === "today" ? "capitalize" : "none" }}
                   >
@@ -409,22 +409,22 @@ export default function ProgressPage() {
                       {
                         label: "Total Calories",
                         value: `${(stats?.totalCalories ?? 0).toLocaleString()} kcal`,
-                        icon: "🔥",
+                        icon: "local_fire_department",
                       },
                       {
                         label: "Total Protein",
                         value: `${macros?.totalProtein ?? 0} g`,
-                        icon: "💪",
+                        icon: "fitness_center",
                       },
                       {
                         label: "Total Carbs",
                         value: `${macros?.totalCarbs ?? 0} g`,
-                        icon: "🌾",
+                        icon: "bakery_dining",
                       },
                       {
                         label: "Total Fat",
                         value: `${macros?.totalFat ?? 0} g`,
-                        icon: "🥑",
+                        icon: "egg_alt",
                       },
                     ].map((row) => (
                       <div

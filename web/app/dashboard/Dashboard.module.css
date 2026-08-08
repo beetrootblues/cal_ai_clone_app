@@ -160,7 +160,7 @@
 
 .macroBar { display: flex; flex-direction: column; gap: 6px; }
 .macroBarTop { display: flex; align-items: center; gap: 8px; }
-.macroEmoji { font-size: 16px; }
+.macroIcon { font-size: 20px; line-height: 1; color: inherit; }
 .macroBarLabel { font-size: 14px; color: var(--text-secondary); font-weight: 600; flex: 1; }
 .macroBarValue { font-size: 18px; font-weight: 800; }
 .macroBarValue small { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
@@ -517,7 +517,7 @@
   text-decoration: none;
 }
 
-@media (max-width: 768px) { .fab { bottom: 22px; right: 16px; } }
+@media (max-width: 768px) { .fab { bottom: calc(76px + env(safe-area-inset-bottom)); right: 16px; } }
 
 .fabGlow {
   position: absolute;

@@ -317,13 +317,13 @@ export default function ChatPage() {
             <div className={styles.todaySnap}>
               <div className={styles.snapTitle}>Today&apos;s Snapshot</div>
               {[
-                { label: "Calories", val: `${Math.round(todayTotals.c)} / ${user?.calorieGoal || 2000}`, icon: "🔥" },
-                { label: "Protein",  val: `${Math.round(todayTotals.p)} / ${user?.proteinGoal || 150}g`, icon: "💪" },
-                { label: "Carbs",    val: `${Math.round(todayTotals.cb)} / ${user?.carbsGoal || 225}g`,  icon: "🌾" },
-                { label: "Fat",      val: `${Math.round(todayTotals.f)} / ${user?.fatGoal || 65}g`,    icon: "🥑" },
+                { label: "Calories", val: `${Math.round(todayTotals.c)} / ${user?.calorieGoal || 2000}`, icon: "local_fire_department" },
+                { label: "Protein",  val: `${Math.round(todayTotals.p)} / ${user?.proteinGoal || 150}g`, icon: "fitness_center" },
+                { label: "Carbs",    val: `${Math.round(todayTotals.cb)} / ${user?.carbsGoal || 225}g`,  icon: "bakery_dining" },
+                { label: "Fat",      val: `${Math.round(todayTotals.f)} / ${user?.fatGoal || 65}g`,    icon: "egg_alt" },
               ].map(s => (
                 <div key={s.label} className={styles.snapRow}>
-                  <span className={styles.snapEmoji}>{s.icon}</span>
+                  <span className={`material-symbols-outlined ${styles.snapEmoji}`} aria-hidden="true">{s.icon}</span>
                   <span className={styles.snapLabel}>{s.label}</span>
                   <span className={styles.snapVal}>{s.val}</span>
                 </div>

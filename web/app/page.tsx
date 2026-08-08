@@ -3,28 +3,28 @@ import styles from "./page.module.css";
 
 const FEATURES = [
   {
-    icon: "📷",
+    icon: "photo_camera",
     tag: "Vision AI",
     title: "Snap & Track",
     desc: "GPT-4o Vision reads every ingredient, serving size, and macro from a single photo — in under 3 seconds.",
     color: "blue",
   },
   {
-    icon: "📸",
+    icon: "compare",
     tag: "Weekly Analysis",
     title: "Progress Photos",
     desc: "Submit a weekly photo. AI compares it side-by-side with last week and gives you a real coach-level breakdown.",
     color: "green",
   },
   {
-    icon: "🤖",
+    icon: "smart_toy",
     tag: "AI Coach",
     title: "FitBot",
     desc: "A focused nutrition & fitness AI that stays on topic. No fluff, just science-backed answers.",
     color: "purple",
   },
   {
-    icon: "📊",
+    icon: "monitoring",
     tag: "Live Data",
     title: "Real-Time Dashboard",
     desc: "Calorie rings, macro bars, and meal history that update live the moment you log.",
@@ -42,6 +42,17 @@ const STATS = [
 export default function LandingPage() {
   return (
     <main className={styles.main}>
+      {/* ── Mobile top bar: logo + quick CTA ── */}
+      <div className={styles.mobileTopbar}>
+        <Link href="/" className={styles.topbarLogo} aria-label="Cal AI home" prefetch={false}>
+          <span className="material-symbols-outlined" aria-hidden="true">fitness_center</span>
+          <span>Cal<em>AI</em></span>
+        </Link>
+        <Link href="/signup" className={styles.topbarCta} id="mobile-top-cta">
+          Get Started
+        </Link>
+      </div>
+
       {/* ── HERO ── */}
       <section className={styles.hero}>
         {/* Ambient background blobs */}
@@ -161,7 +172,7 @@ export default function LandingPage() {
           {FEATURES.map((f) => (
             <div key={f.title} className={`${styles.featureCard} ${styles[`feat_${f.color}`]}`}>
               <div className={styles.featureTopRow}>
-                <span className={styles.featureEmoji}>{f.icon}</span>
+                <span className={`material-symbols-outlined ${styles.featureIcon}`} aria-hidden="true">{f.icon}</span>
                 <span className={styles.featureTag}>{f.tag}</span>
               </div>
               <h3 className={styles.featureTitle}>{f.title}</h3>

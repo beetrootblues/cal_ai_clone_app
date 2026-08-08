@@ -2,9 +2,8 @@
 /**
  * Cal AI — Auth Context
  *
- * Uses API routes (/api/auth/*) for authentication instead of server actions.
- * Server actions use Next.js RSC flight protocol which doesn't work reliably
- * through PHP reverse proxy. Plain JSON API routes work perfectly.
+ * Uses the shared PHP API client (lib/phpApi.ts) for all auth calls.
+ * Dev: http://localhost:8000 | Prod: same-origin /api (static export).
  *
  * Stores the session token in localStorage.
  * Provides useAuth() hook for all pages.
@@ -17,6 +16,7 @@ import React, {
   useCallback,
   ReactNode,
 } from "react";
+import { Auth } from "./phpApi";
 
 /* ── Types ── */
 export interface AuthUser {
@@ -79,12 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setLoading(true);
-    fetch("/api/auth.php?action=getSessionUser", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    })
-      .then((r) => r.json())
+    Auth.getSessionUser(token)
       .then((data) => {
         setUser(data.user ?? null);
         setLoading(false);
@@ -97,15 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = useCallback(
     async (name: string, email: string, password: string) => {
-      const res = await fetch("/api/auth.php?action=signUp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        throw new Error(data.error || "Sign up failed");
-      }
+      const data = await Auth.signUp(name, email, password);
       const t = data.token;
       localStorage.setItem(TOKEN_KEY, t);
       setToken(t);
@@ -115,15 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(
     async (email: string, password: string) => {
-      const res = await fetch("/api/auth.php?action=signIn", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        throw new Error(data.error || "Sign in failed");
-      }
+      const data = await Auth.signIn(email, password);
       const t = data.token;
       localStorage.setItem(TOKEN_KEY, t);
       setToken(t);
@@ -133,11 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     if (token) {
-      await fetch("/api/auth.php?action=signOut", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      }).catch(() => {});
+      await Auth.signOut(token).catch(() => {});
     }
     localStorage.removeItem(TOKEN_KEY);
     setToken(null);

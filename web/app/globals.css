@@ -86,8 +86,10 @@ body {
 
 /* On mobile, all scrollable page content must clear the fixed bottom nav */
 @media (max-width: 768px) {
-  /* Pages that use overflow-y: auto or scroll naturally push content above the nav */
-  main, [class*="page"], [class*="container"] {
+  /* Pages that use overflow-y: auto or scroll naturally push content above the nav.
+     Matches hashed wrappers like Dashboard_page__/Log_page__ and *container__ classes,
+     but NOT the landing module's page_* prefixed classes (page_heroTitle__ etc.). */
+  [class*="_page__"], [class*="container"] {
     padding-bottom: calc(60px + env(safe-area-inset-bottom));
   }
 }
@@ -151,4 +153,44 @@ img { display: block; }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+/* Accessibility & interaction foundations */
+:root { color-scheme: dark; }
+/* Visible keyboard focus everywhere (mouse clicks stay clean) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Kill double-tap zoom delay on touch devices */
+button, [role="button"], a { touch-action: manipulation; }
+button { -webkit-tap-highlight-color: rgba(59, 150, 245, 0.22); }
+/* Skeleton pulse used by progress/profile loaders */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+/* Spinner used by AuthGuard + inline loaders */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+/* Respect reduced motion: disable animations & smooth scroll */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Mobile: 16px form fields prevent iOS auto-zoom on focus */
+@media (max-width: 768px) {
+  input, select, textarea { font-size: 16px !important; }
 }

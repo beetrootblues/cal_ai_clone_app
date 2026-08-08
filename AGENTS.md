@@ -26,6 +26,8 @@
 - **Auth:** Custom session tokens (localStorage) — no Clerk
 - **Styles:** Vanilla CSS Modules — no Tailwind
 - **Dev server:** `http://localhost:3004` (`cd web && npm run dev`)
+- **PHP API (dev):** `php -S 0.0.0.0:8000 -t web/public` — required for login + DB while hot-reloading
+- **DB (local dev):** gitignored `web/.env.local` → Hostinger MySQL `auth-db1873.hstgr.io` / `u697986122_calai`; real password lives in server `.env` (see `.agents/AGENT.md` §16)
 - **Static build:** `cd web && npm run build` → `web/out/`
 - **Local full-stack:** `php -S 0.0.0.0:8080 -t web/out/`
 - **Type check:** `cd web && npx tsc --noEmit`

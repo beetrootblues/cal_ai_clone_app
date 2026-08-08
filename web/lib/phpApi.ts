@@ -14,11 +14,17 @@ async function call<T = any>(endpoint: string, action: string, body?: object): P
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body ?? {}),
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || err.message || `API error ${res.status}`);
+  const text = await res.text();
+  let data: any = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = null; // non-JSON body (HTML error page, proxy 404/405, etc.)
   }
-  return res.json();
+  if (!res.ok || data === null) {
+    throw new Error(data?.error || data?.message || `API error ${res.status}`);
+  }
+  return data as T;
 }
 
 /* ─────────────────────────────────────────────

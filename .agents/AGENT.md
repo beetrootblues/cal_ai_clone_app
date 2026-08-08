@@ -51,7 +51,8 @@ If you add/modify a PHP API endpoint, update the **PHP API Endpoints** table.
 **Stack:** Next.js 14 (static export) · PHP 8 API · MySQL (via PDO) · Groq AI · Vanilla CSS Modules  
 **Root directory (web):** `/home/mrpro/mygit/cal_ai_clone/web/`  
 **Dev server:** `http://localhost:3004` (Next.js hot-reload)  
-**Local full-stack:** `php -S 0.0.0.0:8080 -t web/out/` (PHP serves static + API)  
+**API dev server:** `http://localhost:8000` — `php -S 0.0.0.0:8000 -t web/public` (phpApi.ts targets `:8000` in dev)  
+**Local full-stack (prod-like):** `php -S 0.0.0.0:8080 -t web/out/` (PHP serves static + API)  
 **Start command:** `cd web && npm run dev`  
 **Build command:** `cd web && npm run build` → outputs `web/out/`
 
@@ -535,11 +536,16 @@ User taps "Scan Meal" on /log
 
 ## 16. RUNNING THE PROJECT
 
-### Local Development (hot-reload, no PHP API)
+### Local Development (hot-reload + PHP API)
 ```bash
-cd web && npm run dev    # http://localhost:3004
-# Note: PHP API endpoints (/api/*.php) won't work in this mode
+# Terminal 1 — Next.js dev server   → http://localhost:3004
+cd web && npm run dev
+
+# Terminal 2 — PHP API server       → http://localhost:8000
+php -S 0.0.0.0:8000 -t web/public
 ```
+In dev, `lib/phpApi.ts` calls `http://localhost:8000` directly, so auth + DB work while hot-reloading.
+(On Windows with the repo shims broken, use `node node_modules/next/dist/bin/next dev -p 3004`.)
 
 ### Local Full-Stack (static + PHP API)
 ```bash
@@ -555,10 +561,30 @@ ssh -N -L 3306:auth-db1873.hstgr.io:3306 host &
 # Then use DB_HOST=127.0.0.1 in .env.local
 ```
 
+### Direct remote DB (no SSH tunnel)
+Hostinger DBs (`auth-db*.hstgr.io:3306`) are reachable directly from most networks — no tunnel needed:
+put `DB_HOST=auth-db1873.hstgr.io`, `DB_DATABASE=u697986122_calai`, `DB_USERNAME=u697986122_calai`
+and the DB password in `web/.env.local` (file is gitignored).
+
+⚠️ **Required once per new IP:** Hostinger blocks remote MySQL until you whitelist the caller IP:
+hPanel → Websites → Dashboard → **Remote MySQL** → fill **IP** (e.g. `27.5.194.62` — see `api.ipify.org`) or tick **Any Host**, select the **Database** (`u697986122_calai`), click **Create**.
+Without this, MySQL returns `SQLSTATE[HY000] [1045] Access denied ... (using password: YES)`.
+
+**Real credentials live on the server:** `/home/u697986122/domains/calai.mrprohacks.in/.env`
+(SSH: `u697986122@147.93.99.163` port `65002`). Let the current DB password be read from there +
+`web/.env.local` (gitignored, local only) — never commit it.
+
 ### Type check
 ```bash
 cd web && npx tsc --noEmit
 ```
+
+### Smoke-test (local, after the two servers are up)
+```bash
+# API: expect HTTP 200 + {"token":...}
+curl -X POST "http://localhost:8000/api/auth.php?action=signIn" -H "Content-Type: application/json" -d "{\"email\":\"demo@calai.app\",\"password\":\"Demo1234!\"}"
+```
+Browser flow to verify: `http://localhost:3004/login` → demo creds → should land on `/dashboard` with no console errors.
 
 ### Production (Hostinger — No Node.js/PM2 needed)
 ```bash
@@ -650,5 +676,5 @@ export default function DashboardPage() {
 10. **Maintain premium UX** — dark theme, smooth animations, glassmorphism cards.
 11. **⚠️ UPDATE AGENT.md + AGENTS.md** after ANY file change — non-negotiable (§ 0).
 
-> **Last audited:** April 26, 2026  
+> **Last audited:** August 8, 2026 — Hostinger DB hooked up (login E2E verified), phpApi.ts/auth-context.php hardened, mobile landing polish  
 > **Auditor:** Assistant (Updated .gitignore and cleaned up build artifacts)

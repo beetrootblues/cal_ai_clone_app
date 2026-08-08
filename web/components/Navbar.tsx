@@ -67,7 +67,7 @@ export function Navbar() {
                 key={href}
                 href={href}
                 prefetch={false}
-                className={`${styles.link} ${isActive ? styles.active : ""}`}
+                className={`${styles.link} ${isActive ? styles.active : ""}`} aria-current={isActive ? "page" : undefined}
               >
                 <span className={`material-symbols-outlined ${styles.linkIcon}`}>
                   {icon}
@@ -87,7 +87,7 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bottom Navigation */}
-      <div className={styles.mobileBottomNav}>
+      <nav className={styles.mobileBottomNav} aria-label="Mobile">
         <div className={styles.mobileLinksItems}>
           {NAV_ITEMS.map(({ href, label, icon }) => {
             const isActive = pathname?.startsWith(href);
@@ -96,7 +96,7 @@ export function Navbar() {
                 key={href}
                 href={href}
                 prefetch={false}
-                className={`${styles.mobileLink} ${isActive ? styles.mobileActive : ""}`}
+                className={`${styles.mobileLink} ${isActive ? styles.mobileActive : ""}`} aria-current={isActive ? "page" : undefined}
               >
                 <div className={styles.mobileIconWrapper}>
                   <span className={`material-symbols-outlined ${styles.mobileIcon}`}>
@@ -108,7 +108,7 @@ export function Navbar() {
             );
           })}
         </div>
-      </div>
+      </nav>
     </>
   );
 }

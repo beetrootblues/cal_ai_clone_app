@@ -63,10 +63,10 @@ interface SavedPlan {
 }
 
 const MEAL_TYPE_ICONS: Record<string, string> = {
-  breakfast: "☀️",
-  lunch: "🫙",
-  dinner: "🍽️",
-  snack: "🍎",
+  breakfast: "breakfast_dining",
+  lunch: "lunch_dining",
+  dinner: "dinner_dining",
+  snack: "apple",
 };
 
 const MEAL_TYPE_COLORS: Record<string, string> = {
@@ -291,10 +291,10 @@ export default function MealPlanPage() {
               <span className="material-symbols-outlined">tune</span>
               <strong>Plan Configuration</strong>
               <div className={styles.targetChips}>
-                <span className={styles.targetChip}>🔥 {user?.calorieGoal ?? 2000} kcal</span>
-                <span className={styles.targetChip} style={{ color: "var(--protein)" }}>💪 {user?.proteinGoal ?? 150}g P</span>
-                <span className={styles.targetChip} style={{ color: "var(--carbs)" }}>🌾 {user?.carbsGoal ?? 200}g C</span>
-                <span className={styles.targetChip} style={{ color: "var(--fat)" }}>🥑 {user?.fatGoal ?? 65}g F</span>
+                <span className={styles.targetChip}><span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: 15 }}>local_fire_department</span> {user?.calorieGoal ?? 2000} kcal</span>
+                <span className={styles.targetChip} style={{ color: "var(--protein)" }}><span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: 15 }}>fitness_center</span> {user?.proteinGoal ?? 150}g P</span>
+                <span className={styles.targetChip} style={{ color: "var(--carbs)" }}><span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: 15 }}>bakery_dining</span> {user?.carbsGoal ?? 200}g C</span>
+                <span className={styles.targetChip} style={{ color: "var(--fat)" }}><span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: 15 }}>egg_alt</span> {user?.fatGoal ?? 65}g F</span>
                 <a href="/profile" className={styles.editTargets}>Edit Goals →</a>
               </div>
             </div>
@@ -470,7 +470,7 @@ export default function MealPlanPage() {
                       <div className={styles.tipsList}>
                         {plan.nutritionTips.map((tip) => (
                           <div key={tip} className={styles.tipItem}>
-                            <span style={{ color: "var(--primary)" }}>💡</span>
+                            <span className="material-symbols-outlined" style={{ color: "var(--primary)", fontSize: 16 }}>lightbulb</span>
                             {tip}
                           </div>
                         ))}
@@ -550,7 +550,7 @@ function DayDetail({
           const key = `${day.dayName}-${meal.mealType}`;
           const isExpanded = expandedMeal === key;
           const typeColor = MEAL_TYPE_COLORS[meal.mealType.toLowerCase()] ?? "var(--primary)";
-          const typeIcon = MEAL_TYPE_ICONS[meal.mealType.toLowerCase()] ?? "🍴";
+          const typeIcon = MEAL_TYPE_ICONS[meal.mealType.toLowerCase()] ?? "restaurant";
 
           return (
             <div
@@ -564,11 +564,11 @@ function DayDetail({
                 aria-expanded={isExpanded}
               >
                 <div className={styles.mealTypeTag} style={{ background: `${typeColor}22`, color: typeColor }}>
-                  {typeIcon} {meal.mealType.charAt(0).toUpperCase() + meal.mealType.slice(1)}
+                  <span className={`material-symbols-outlined ${styles.mealCardTypeIcon}`} aria-hidden="true">{typeIcon}</span> {meal.mealType.charAt(0).toUpperCase() + meal.mealType.slice(1)}
                 </div>
                 <div className={styles.mealMain}>
                   <span className={styles.mealName}>{meal.name}</span>
-                  <span className={styles.mealMeta}>{meal.servingSize} · ⏱ {meal.prepTime}</span>
+                  <span className={styles.mealMeta}>{meal.servingSize} <span className="material-symbols-outlined" style={{ fontSize: 14, opacity: 0.7, verticalAlign: "middle" }} aria-hidden="true">schedule</span> {meal.prepTime}</span>
                 </div>
                 <div className={styles.mealCalTag}>{meal.calories} kcal</div>
                 <span className="material-symbols-outlined" style={{ fontSize: 18, color: "var(--text-muted)", transition: "transform 0.2s", transform: isExpanded ? "rotate(180deg)" : "none" }}>
@@ -616,7 +616,7 @@ function DayDetail({
 
       {day.tips && (
         <div className={styles.dayTip}>
-          <span>💡</span> {day.tips}
+          <span className="material-symbols-outlined" style={{ fontSize: 16, color: "var(--accent-yellow)" }} aria-hidden="true">lightbulb</span> {day.tips}
         </div>
       )}
     </div>
@@ -626,12 +626,12 @@ function DayDetail({
 /* ── Shopping List ── */
 function ShoppingListView({ shoppingList, estimatedCost }: { shoppingList: ShoppingList; estimatedCost: string }) {
   const sections: { title: string; icon: string; items: string[] }[] = [
-    { title: "Proteins", icon: "💪", items: shoppingList.proteins ?? [] },
-    { title: "Carbs & Grains", icon: "🌾", items: shoppingList.carbs ?? [] },
-    { title: "Vegetables", icon: "🥦", items: shoppingList.vegetables ?? [] },
-    { title: "Fruits", icon: "🍎", items: shoppingList.fruits ?? [] },
-    { title: "Dairy & Eggs", icon: "🥚", items: shoppingList.dairy ?? [] },
-    { title: "Other", icon: "🛒", items: shoppingList.other ?? [] },
+    { title: "Proteins", icon: "nutrition", items: shoppingList.proteins ?? [] },
+    { title: "Carbs & Grains", icon: "bakery_dining", items: shoppingList.carbs ?? [] },
+    { title: "Vegetables", icon: "eco", items: shoppingList.vegetables ?? [] },
+    { title: "Fruits", icon: "apple", items: shoppingList.fruits ?? [] },
+    { title: "Dairy & Eggs", icon: "egg_alt", items: shoppingList.dairy ?? [] },
+    { title: "Other", icon: "shopping_bag", items: shoppingList.other ?? [] },
   ].filter((s) => s.items.length > 0);
 
   const [checked, setChecked] = useState<Set<string>>(new Set());
@@ -657,7 +657,7 @@ function ShoppingListView({ shoppingList, estimatedCost }: { shoppingList: Shopp
       <div className={styles.shoppingGrid}>
         {sections.map((sec) => (
           <div key={sec.title} className={styles.shoppingSection}>
-            <div className={styles.shoppingSectionTitle}>{sec.icon} {sec.title}</div>
+            <div className={styles.shoppingSectionTitle}><span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: 16 }}>{sec.icon}</span> {sec.title}</div>
             {sec.items.map((item) => (
               <label key={item} className={styles.shoppingItem}>
                 <input

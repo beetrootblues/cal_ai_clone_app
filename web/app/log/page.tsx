@@ -23,10 +23,10 @@ import { AuthGuard } from "@/components/AuthGuard";
    CONSTANTS & TYPES
 ═══════════════════════════════════════════════════════════ */
 const MEAL_TYPES = [
-  { id: "breakfast", label: "Breakfast", icon: "☀️", color: "#fbbf24", gradient: "linear-gradient(135deg,#fbbf2430,#fbbf2408)" },
-  { id: "lunch",     label: "Lunch",     icon: "🌤️", color: "#3b96f5", gradient: "linear-gradient(135deg,#3b96f530,#3b96f508)" },
-  { id: "dinner",    label: "Dinner",    icon: "🌙", color: "#a855f7", gradient: "linear-gradient(135deg,#a855f730,#a855f708)" },
-  { id: "snack",     label: "Snack",     icon: "🍎", color: "#10e56b", gradient: "linear-gradient(135deg,#10e56b30,#10e56b08)" },
+  { id: "breakfast", label: "Breakfast", icon: "breakfast_dining", color: "#fbbf24", gradient: "linear-gradient(135deg,#fbbf2430,#fbbf2408)" },
+  { id: "lunch",     label: "Lunch",     icon: "lunch_dining", color: "#3b96f5", gradient: "linear-gradient(135deg,#3b96f530,#3b96f508)" },
+  { id: "dinner",    label: "Dinner",    icon: "dinner_dining", color: "#a855f7", gradient: "linear-gradient(135deg,#a855f730,#a855f708)" },
+  { id: "snack",     label: "Snack",     icon: "apple", color: "#10e56b", gradient: "linear-gradient(135deg,#10e56b30,#10e56b08)" },
 ] as const;
 
 type MealTypeId = typeof MEAL_TYPES[number]["id"];
@@ -508,7 +508,7 @@ export default function LogPage() {
       fetchMeals();
       fetchRecent();
       setPendingFood(null);
-      showToast(`${food.emoji} ${food.name} logged!`);
+      showToast(`${food.name} logged!`);
     } catch { showToast("Failed to log food", "error"); }
     finally { setSaving(false); }
   }, [userId, mealType, today, todayTotals]);
@@ -531,7 +531,7 @@ export default function LogPage() {
       fetchMeals();
       fetchRecent();
       setForm(emptyForm); setShowManual(false);
-      showToast(`✓ ${form.name} logged`);
+      showToast(`${form.name} logged`);
     } catch { showToast("Failed to save", "error"); }
     finally { setSaving(false); }
   }
@@ -640,7 +640,9 @@ export default function LogPage() {
       setAiResult(null);
       setScanState("idle");
       if (fileRef.current) fileRef.current.value = "";
-      showToast(`🤖 ${aiResult.name} logged!`);
+      showToast(`${aiResult.name} logged!`);
+    } catch {
+      showToast("Failed to log meal", "error");
     } finally { setSaving(false); }
   }
 
@@ -740,7 +742,7 @@ export default function LogPage() {
                   id={`log-meal-${m.id}`}
                   aria-pressed={active}
                 >
-                  <span className={styles.mealTypeTabIcon}>{m.icon}</span>
+                  <span className={`material-symbols-outlined ${styles.mealTypeTabIcon}`} aria-hidden="true">{m.icon}</span>
                   <span className={styles.mealTypeTabLabel}>{m.label}</span>
                 </button>
               );
@@ -806,9 +808,9 @@ export default function LogPage() {
                 <div className={styles.resultCard}>
                     <h3>{aiResult.name}</h3>
                     <div className={styles.resultQtyWrap}>
-                        <button onClick={() => setScanQty(q => Math.max(0.5, q - 0.5))}>–</button>
+                        <button type="button" onClick={() => setScanQty(q => Math.max(0.5, q - 0.5))} aria-label="Decrease quantity"><span className="material-symbols-outlined">remove</span></button>
                         <span>{scanQty}</span>
-                        <button onClick={() => setScanQty(q => q + 0.5)}>+</button>
+                        <button type="button" onClick={() => setScanQty(q => q + 0.5)} aria-label="Increase quantity"><span className="material-symbols-outlined">add</span></button>
                     </div>
                     <div className={styles.resultMacrosRow}>
                         <div>{Math.round(aiResult.calories * scanQty)} kcal</div>
@@ -829,54 +831,127 @@ export default function LogPage() {
                     <div className={styles.mealsCardHeader}>
                         <strong>Today's Meals</strong>
                     </div>
-                    <div className={styles.mealsList}>
-                        {meals.map((m: any) => (
-                            <MealRow key={m.id} meal={m} onDelete={handleDelete} />
-                        ))}
-                    </div>
+                    {meals.length === 0 ? (
+                        <div className={styles.emptyMeals}>
+                            <span className="material-symbols-outlined" aria-hidden="true">restaurant</span>
+                            <strong>No meals logged yet</strong>
+                            <p>Snap a photo above, search a food, or add one manually to start tracking today.</p>
+                            <button type="button" className={styles.emptyMealsCta} onClick={() => setShowManual(true)}>
+                                <span className="material-symbols-outlined" aria-hidden="true">add_circle</span>
+                                Log your first meal
+                            </button>
+                        </div>
+                    ) : (
+                        <div className={styles.mealsList}>
+                            {meals.map((m: any) => (
+                                <MealRow key={m.id} meal={m} onDelete={handleDelete} />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
             <aside className={styles.rightCol}>
                 <div className={styles.searchWrap}>
                     <input 
                         placeholder="Search foods..." 
+                        aria-label="Search foods" 
                         value={query} 
                         onChange={(e) => setQuery(e.target.value)} 
                     />
                 </div>
                 <div className={styles.foodGrid}>
-                    {displayedFoods.map((f) => (
-                        <div key={f.name}>
-                            <FoodCard 
-                                food={f} 
-                                onSelect={() => setPendingFood(pendingFood?.name === f.name ? null : f)}
-                                isSelected={pendingFood?.name === f.name}
-                                adding={saving}
-                            />
-                            {pendingFood?.name === f.name && (
-                                <QuantityPicker 
-                                    food={f}
-                                    onConfirm={handleConfirmAdd}
-                                    onCancel={() => setPendingFood(null)}
-                                    saving={saving}
-                                />
-                            )}
+                    {displayedFoods.length === 0 ? (
+                        <div className={styles.noFoods}>
+                            <span className="material-symbols-outlined" aria-hidden="true">search_off</span>
+                            <strong>No foods found</strong>
+                            <p>Try a different search above, or add your meal manually.</p>
+                            <button type="button" className={styles.emptyMealsCta} onClick={() => setShowManual(true)}>
+                                <span className="material-symbols-outlined" aria-hidden="true">add_circle</span>
+                                Log manually
+                            </button>
                         </div>
-                    ))}
+                    ) : (
+                        displayedFoods.map((f) => (
+                            <div key={f.name}>
+                                <FoodCard 
+                                    food={f} 
+                                    onSelect={() => setPendingFood(pendingFood?.name === f.name ? null : f)}
+                                    isSelected={pendingFood?.name === f.name}
+                                    adding={saving}
+                                />
+                                {pendingFood?.name === f.name && (
+                                    <QuantityPicker 
+                                        food={f}
+                                        onConfirm={handleConfirmAdd}
+                                        onCancel={() => setPendingFood(null)}
+                                        saving={saving}
+                                    />
+                                )}
+                            </div>
+                        ))
+                    )}
                 </div>
             </aside>
           </div>
         </div>
 
         {showManual && (
-            <div className={styles.backdrop} onClick={() => setShowManual(false)}>
-                <div className={styles.modal} onClick={e => e.stopPropagation()}>
-                    <form onSubmit={handleManualSubmit}>
-                        <input placeholder="Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
-                        <input placeholder="Kcal" type="number" value={form.calories} onChange={e => setForm({...form, calories: e.target.value})} required />
-                        <button type="submit" disabled={saving}>Log</button>
-                    </form>
+            <div
+              className={styles.backdrop}
+              onClick={() => setShowManual(false)}
+            >
+              <div
+                className={styles.modal}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="manual-title"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.modalHeader}>
+                  <div>
+                    <h2 id="manual-title" className={styles.modalTitle}>Log Manually</h2>
+                    <p className={styles.modalSub}>Add a meal without scanning</p>
+                  </div>
+                  <button type="button" className={styles.manualClose} onClick={() => setShowManual(false)} aria-label="Close">
+                    <span className="material-symbols-outlined">close</span>
+                  </button>
+                  <div className={styles.modalHeaderGlow} aria-hidden="true" />
                 </div>
+                <form className={styles.manualForm} onSubmit={handleManualSubmit}>
+                  <div className={styles.manualField}>
+                    <label className={styles.manualLabel} htmlFor="manual-name">Meal name</label>
+                    <input id="manual-name" className={styles.manualInput} placeholder="e.g. Grilled chicken bowl" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+                  </div>
+                  <div className={styles.manualGrid}>
+                    <div className={styles.manualField}>
+                      <label className={styles.manualLabel} htmlFor="manual-cal">Calories (kcal)</label>
+                      <input id="manual-cal" type="number" min="0" step="1" inputMode="numeric" className={styles.manualInput} placeholder="420" value={form.calories} onChange={e => setForm({...form, calories: e.target.value})} required />
+                    </div>
+                    <div className={styles.manualField}>
+                      <label className={styles.manualLabel} htmlFor="manual-protein">Protein (g)</label>
+                      <input id="manual-protein" type="number" min="0" step="1" inputMode="decimal" className={styles.manualInput} placeholder="32" value={form.protein} onChange={e => setForm({...form, protein: e.target.value})} />
+                    </div>
+                    <div className={styles.manualField}>
+                      <label className={styles.manualLabel} htmlFor="manual-carbs">Carbs (g)</label>
+                      <input id="manual-carbs" type="number" min="0" step="1" inputMode="decimal" className={styles.manualInput} placeholder="38" value={form.carbs} onChange={e => setForm({...form, carbs: e.target.value})} />
+                    </div>
+                    <div className={styles.manualField}>
+                      <label className={styles.manualLabel} htmlFor="manual-fat">Fat (g)</label>
+                      <input id="manual-fat" type="number" min="0" step="1" inputMode="decimal" className={styles.manualInput} placeholder="12" value={form.fat} onChange={e => setForm({...form, fat: e.target.value})} />
+                    </div>
+                  </div>
+                  <div className={styles.manualField}>
+                    <label className={styles.manualLabel} htmlFor="manual-serving">Serving size</label>
+                    <input id="manual-serving" className={styles.manualInput} placeholder="1 bowl" value={form.servingSize} onChange={e => setForm({...form, servingSize: e.target.value})} />
+                  </div>
+                  <div className={styles.manualActions}>
+                    <button type="button" className={styles.manualCancel} onClick={() => setShowManual(false)}>Cancel</button>
+                    <button type="submit" className={styles.scanLogBtn} disabled={saving}>
+                      {saving ? "Logging?" : "Log Meal"}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
         )}
       </div>

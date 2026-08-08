@@ -22,6 +22,7 @@ export default function OnboardingPage() {
   const [goal, setGoal] = useState("maintain");
   
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // If already onboarded, redirect
   useEffect(() => {
@@ -31,20 +32,28 @@ export default function OnboardingPage() {
 
   if (loading || !user || user.onboarded) return null;
 
+  function clampInt(value: string, min: number, max: number, fallback: number): number {
+    const n = parseInt(value, 10);
+    if (Number.isNaN(n)) return fallback;
+    return Math.min(max, Math.max(min, n));
+  }
+
   async function handleFinish() {
+    setSubmitError("");
     setSubmitting(true);
     try {
       await Users.completeOnboarding(Number(user!.id), {
         gender,
-        ageYears: parseInt(ageYears, 10) || 30,
-        heightCm: parseInt(heightCm, 10) || 175,
-        weightKg: parseInt(weightKg, 10) || 70,
+        ageYears: clampInt(ageYears, 13, 100, 30),
+        heightCm: clampInt(heightCm, 100, 250, 175),
+        weightKg: clampInt(weightKg, 30, 300, 70),
         activityLevel,
         goal,
       });
       window.location.href = "/dashboard";
     } catch (err) {
       console.error(err);
+      setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setSubmitting(false);
     }
   }
@@ -101,7 +110,7 @@ export default function OnboardingPage() {
         {step === 1 && (
           <div className={styles.stepContainer}>
             <div className={styles.optionsGridRow}>
-              <button 
+              <button type="button" aria-pressed={gender === "male"}
                 className={`${styles.choiceCard} ${styles.choiceCardCol} ${gender === "male" ? styles.choiceCardActive : ""}`}
                 onClick={() => { setGender("male"); handleNext(); }}
               >
@@ -110,7 +119,7 @@ export default function OnboardingPage() {
                 </div>
                 <span className={styles.choiceLabel}>Male</span>
               </button>
-              <button 
+              <button type="button" aria-pressed={gender === "female"}
                 className={`${styles.choiceCard} ${styles.choiceCardCol} ${gender === "female" ? styles.choiceCardActive : ""}`}
                 onClick={() => { setGender("female"); handleNext(); }}
               >
@@ -128,27 +137,27 @@ export default function OnboardingPage() {
           <div className={styles.stepContainer}>
             <div className={styles.statsGrid}>
               <div className={styles.field}>
-                <label className={styles.label}>Age</label>
+                <label className={styles.label} htmlFor="onb-age">Age</label>
                 <div className={styles.inputWrap}>
                   <span className={`material-symbols-outlined ${styles.inputIcon}`}>calendar_today</span>
-                  <input type="number" className={styles.input} value={ageYears} onChange={e => setAgeYears(e.target.value)} autoFocus placeholder="30" />
+                  <input id="onb-age" type="number" min="13" max="100" className={styles.input} value={ageYears} onChange={e => setAgeYears(e.target.value)} autoFocus placeholder="30" />
                   <span className={styles.inputUnit}>years</span>
                 </div>
               </div>
               <div className={styles.statsRow}>
                 <div className={styles.field}>
-                  <label className={styles.label}>Height</label>
+                  <label className={styles.label} htmlFor="onb-height">Height</label>
                   <div className={styles.inputWrap}>
                     <span className={`material-symbols-outlined ${styles.inputIcon}`}>height</span>
-                    <input type="number" className={styles.input} value={heightCm} onChange={e => setHeightCm(e.target.value)} placeholder="175" />
+                    <input id="onb-height" type="number" min="100" max="250" className={styles.input} value={heightCm} onChange={e => setHeightCm(e.target.value)} placeholder="175" />
                     <span className={styles.inputUnit}>cm</span>
                   </div>
                 </div>
                 <div className={styles.field}>
-                  <label className={styles.label}>Weight</label>
+                  <label className={styles.label} htmlFor="onb-weight">Weight</label>
                   <div className={styles.inputWrap}>
                     <span className={`material-symbols-outlined ${styles.inputIcon}`}>monitor_weight</span>
-                    <input type="number" className={styles.input} value={weightKg} onChange={e => setWeightKg(e.target.value)} placeholder="70" />
+                    <input id="onb-weight" type="number" min="30" max="300" className={styles.input} value={weightKg} onChange={e => setWeightKg(e.target.value)} placeholder="70" />
                     <span className={styles.inputUnit}>kg</span>
                   </div>
                 </div>
@@ -167,7 +176,7 @@ export default function OnboardingPage() {
                 { id: "moderate",  icon: "fitness_center",   label: "Moderately Active", sub: "Moderate exercise 3-5 days/week" },
                 { id: "active",    icon: "directions_run",   label: "Very Active", sub: "Hard exercise 6-7 days/week" },
               ].map(opt => (
-                <div key={opt.id} 
+                <button key={opt.id} type="button" aria-pressed={activityLevel === opt.id}
                   className={`${styles.choiceCard} ${activityLevel === opt.id ? styles.choiceCardActive : ""}`}
                   onClick={() => setActivityLevel(opt.id)}
                 >
@@ -179,7 +188,7 @@ export default function OnboardingPage() {
                     <span className={styles.choiceSub}>{opt.sub}</span>
                   </div>
                   {activityLevel === opt.id && <span className={`material-symbols-outlined ${styles.checkIcon}`}>check_circle</span>}
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -194,7 +203,7 @@ export default function OnboardingPage() {
                 { id: "maintain", icon: "trending_flat",   label: "Maintain Weight", sub: "Maintenance calories" },
                 { id: "gain",     icon: "trending_up",     label: "Build Muscle",    sub: "Caloric surplus (+500 kcal/day)" },
               ].map(opt => (
-                <div key={opt.id} 
+                <button key={opt.id} type="button" aria-pressed={goal === opt.id}
                   className={`${styles.choiceCard} ${goal === opt.id ? styles.choiceCardActive : ""}`}
                   onClick={() => setGoal(opt.id)}
                 >
@@ -206,9 +215,16 @@ export default function OnboardingPage() {
                     <span className={styles.choiceSub}>{opt.sub}</span>
                   </div>
                   {goal === opt.id && <span className={`material-symbols-outlined ${styles.checkIcon}`}>check_circle</span>}
-                </div>
+                </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {submitError && (
+          <div className={styles.onboardError} role="alert">
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>error</span>
+            {submitError}
           </div>
         )}
 

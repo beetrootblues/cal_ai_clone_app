@@ -140,7 +140,7 @@ function GoalRow({
   return (
     <div className={styles.goalRow} id={id}>
       <div className={styles.goalLeft}>
-        <span className={styles.goalEmoji}>{icon}</span>
+        <span className={`material-symbols-outlined ${styles.goalEmoji}`} aria-hidden="true">{icon}</span>
         <div>
           <div className={styles.goalLabel}>{label}</div>
           <div className={styles.goalUnit}>{unit}/day</div>
@@ -398,7 +398,7 @@ export default function ProfilePage() {
                   <p className={styles.profileEmail}>{userEmail}</p>
                   <div className={styles.profileBadges}>
                     <span className={styles.badge} style={{ background: "rgba(16,229,107,0.15)", color: "var(--accent-green)" }}>
-                      🔥 7-Day Streak
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>local_fire_department</span> 7-Day Streak
                     </span>
                     {/* Live plan badge — links to /plans */}
                     <Link href="/plans" className={styles.badge} style={{ background: meta.glow, color: meta.color, textDecoration: "none" }}>
@@ -406,7 +406,7 @@ export default function ProfilePage() {
                       {meta.label} Plan
                     </Link>
                     <span className={styles.badge} style={{ background: "rgba(59,130,246,0.15)", color: "var(--primary-light)" }}>
-                      💪 Protein Champion
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>fitness_center</span> Protein Champion
                     </span>
                   </div>
                 </>
@@ -467,11 +467,11 @@ export default function ProfilePage() {
                   <p className={styles.panelSub}>Fine-tune your daily targets. FitBot adapts its advice accordingly.</p>
 
                   <div className={styles.goalsList}>
-                    <GoalRow loading={authLoading} label="Daily Calories" unit="kcal" val={calories} setVal={setCalories} min={1200} max={4000}  step={50}  icon="🔥" id="profile-goal-daily-calories" />
-                    <GoalRow loading={authLoading} label="Protein"        unit="g"    val={protein}  setVal={setProtein}  min={40}   max={300}   step={5}   icon="💪" id="profile-goal-protein" />
-                    <GoalRow loading={authLoading} label="Carbohydrates"  unit="g"    val={carbs}    setVal={setCarbs}    min={50}   max={500}   step={5}   icon="🌾" id="profile-goal-carbohydrates" />
-                    <GoalRow loading={authLoading} label="Fat"            unit="g"    val={fat}      setVal={setFat}      min={20}   max={200}   step={2}   icon="🥑" id="profile-goal-fat" />
-                    <GoalRow loading={authLoading} label="Body Weight"    unit="kg"   val={weight}   setVal={setWeight}   min={30}   max={200}   step={0.5} icon="⚖️" id="profile-goal-body-weight" />
+                    <GoalRow loading={authLoading} label="Daily Calories" unit="kcal" val={calories} setVal={setCalories} min={1200} max={4000}  step={50}  icon="local_fire_department" id="profile-goal-daily-calories" />
+                    <GoalRow loading={authLoading} label="Protein"        unit="g"    val={protein}  setVal={setProtein}  min={40}   max={300}   step={5}   icon="fitness_center" id="profile-goal-protein" />
+                    <GoalRow loading={authLoading} label="Carbohydrates"  unit="g"    val={carbs}    setVal={setCarbs}    min={50}   max={500}   step={5}   icon="bakery_dining" id="profile-goal-carbohydrates" />
+                    <GoalRow loading={authLoading} label="Fat"            unit="g"    val={fat}      setVal={setFat}      min={20}   max={200}   step={2}   icon="egg_alt" id="profile-goal-fat" />
+                    <GoalRow loading={authLoading} label="Body Weight"    unit="kg"   val={weight}   setVal={setWeight}   min={30}   max={200}   step={0.5} icon="scale" id="profile-goal-body-weight" />
                   </div>
 
                   <button
@@ -571,7 +571,7 @@ export default function ProfilePage() {
                     <h3 className={styles.premiumTitle}>
                       {currentPlan === "free"
                         ? "You're on the Free Plan"
-                        : `You're on CalAI ${meta.label} ⭐`
+                        : <>You're on CalAI {meta.label} <span className="material-symbols-outlined" style={{ fontSize: 16 }}>workspace_premium</span></>
                       }
                     </h3>
                     <p className={styles.premiumSub}>

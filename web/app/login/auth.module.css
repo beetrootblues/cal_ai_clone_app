@@ -22,7 +22,7 @@
   right: -120px;
   width: 520px;
   height: 520px;
-  background: radial-gradient(circle, hsl(262 80% 55% / 0.28) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(59, 150, 245, 0.22) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   animation: blobFloat1 14s ease-in-out infinite alternate;
@@ -53,8 +53,8 @@
   z-index: 1;
   width: 100%;
   max-width: 440px;
-  background: hsl(240 20% 10% / 0.75);
-  border: 1px solid hsl(255 30% 30% / 0.4);
+  background: rgba(12, 21, 32, 0.75);
+  border: 1px solid rgba(30, 45, 62, 0.5);
   border-radius: 24px;
   padding: 2.5rem 2.25rem 2rem;
   box-shadow:
@@ -79,19 +79,19 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: linear-gradient(135deg, hsl(262 80% 60%), hsl(198 80% 55%));
+  background: linear-gradient(135deg, var(--primary), var(--accent-green));
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 22px;
   color: #fff;
   flex-shrink: 0;
-  box-shadow: 0 4px 16px hsl(262 80% 60% / 0.4);
+  box-shadow: 0 4px 16px rgba(59, 150, 245, 0.4);
 }
 .logoText {
   font-size: 1.375rem;
   font-weight: 700;
-  background: linear-gradient(135deg, hsl(262 80% 75%), hsl(198 80% 70%));
+  background: linear-gradient(135deg, var(--primary-light), var(--accent-green-dark));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -122,9 +122,9 @@
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: 12px;
-  background: hsl(262 60% 20% / 0.5);
-  border: 1px dashed hsl(262 60% 55% / 0.5);
-  color: hsl(262 60% 80%);
+  background: rgba(59, 150, 245, 0.12);
+  border: 1px dashed rgba(59, 150, 245, 0.5);
+  color: var(--primary-light);
   font-size: 0.825rem;
   cursor: pointer;
   text-align: left;
@@ -132,14 +132,14 @@
   transition: background 0.2s, border-color 0.2s;
 }
 .demoBanner:hover {
-  background: hsl(262 60% 22% / 0.65);
-  border-color: hsl(262 60% 65% / 0.7);
+  background: rgba(59, 150, 245, 0.18);
+  border-color: rgba(59, 150, 245, 0.65);
 }
 .demoBanner code {
   margin-left: auto;
   font-family: monospace;
   font-size: 0.78rem;
-  color: hsl(262 60% 72%);
+  color: hsl(210 90% 78%);
   opacity: 0.8;
 }
 
@@ -178,19 +178,19 @@
   width: 100%;
   padding: 0.75rem 0.875rem 0.75rem 2.875rem;
   border-radius: 12px;
-  border: 1px solid hsl(240 20% 25% / 0.8);
-  background: hsl(240 20% 8% / 0.8);
+  border: 1px solid hsl(210 25% 22% / 0.8);
+  background: hsl(216 30% 9% / 0.8);
   color: hsl(220 20% 92%);
   font-size: 0.925rem;
   font-family: inherit;
   transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
-  caret-color: hsl(262 80% 65%);
+  caret-color: var(--primary);
 }
 .input::placeholder { color: hsl(220 15% 35%); }
 .input:focus {
-  border-color: hsl(262 80% 60% / 0.7);
-  box-shadow: 0 0 0 3px hsl(262 80% 60% / 0.18);
+  border-color: rgba(59, 150, 245, 0.7);
+  box-shadow: 0 0 0 3px rgba(59, 150, 245, 0.18);
 }
 .inputError {
   border-color: hsl(4 80% 60% / 0.7) !important;
@@ -202,13 +202,13 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: hsl(220 15% 45%);
+  color: var(--text-muted);
   display: flex;
-  padding: 4px;
-  border-radius: 6px;
-  transition: color 0.15s;
+  padding: 10px;
+  border-radius: 10px;
+  transition: color 0.15s, background 0.15s;
 }
-.eyeBtn:hover { color: hsl(220 15% 70%); }
+.eyeBtn:hover { color: var(--text); background: rgba(255,255,255,0.06); }
 .eyeBtn .material-symbols-outlined { font-size: 20px !important; }
 
 /* ── Password Strength ──────────────────────────────── */
@@ -273,19 +273,19 @@
   font-weight: 700;
   font-family: inherit;
   letter-spacing: -0.01em;
-  background: linear-gradient(135deg, hsl(262 80% 58%), hsl(240 70% 54%));
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
-  box-shadow: 0 4px 20px hsl(262 80% 55% / 0.4);
+  box-shadow: 0 4px 20px rgba(59, 150, 245, 0.4);
   transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s;
   margin-top: 0.5rem;
 }
 .submitBtn:hover:not(:disabled) {
-  box-shadow: 0 6px 28px hsl(262 80% 55% / 0.55);
+  box-shadow: 0 6px 28px rgba(59, 150, 245, 0.55);
   transform: translateY(-1px);
 }
 .submitBtn:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 12px hsl(262 80% 55% / 0.4);
+  box-shadow: 0 2px 12px rgba(59, 150, 245, 0.35);
 }
 .submitBtn:disabled {
   opacity: 0.6;
@@ -314,12 +314,12 @@
   margin-top: 1.25rem;
 }
 .switchLink {
-  color: hsl(262 70% 72%);
+  color: var(--primary-light);
   font-weight: 600;
   text-decoration: none;
   transition: color 0.15s;
 }
-.switchLink:hover { color: hsl(262 70% 82%); text-decoration: underline; }
+.switchLink:hover { color: #fff; text-decoration: underline; }
 
 /* ── Responsive ─────────────────────────────────────── */
 @media (max-width: 480px) {
@@ -331,4 +331,9 @@
     border-radius: 20px;
   }
   .heading { font-size: 1.45rem; }
+}
+
+/* Mobile: full-size tap target for the switch link */
+@media (max-width: 768px) {
+  .switchLink { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; }
 }

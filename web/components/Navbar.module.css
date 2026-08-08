@@ -209,6 +209,7 @@
     justify-content: center;
     gap: 2px;
     padding: 6px 4px;
+    min-height: 48px;
     text-decoration: none;
     color: var(--text-secondary);
     border-radius: var(--radius-sm);
@@ -229,12 +230,16 @@
   }
 
   .mobileIcon {
-    font-size: 22px;
-    transition: color 0.2s ease;
+    font-size: 24px;
+    transition: color 0.2s ease, transform 0.15s var(--ease-out);
+  }
+
+  .mobileLink:active .mobileIconWrapper {
+    transform: scale(0.9);
   }
 
   .mobileLabel {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 600;
     opacity: 0.7;
     white-space: nowrap;

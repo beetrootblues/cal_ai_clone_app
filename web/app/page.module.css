@@ -430,7 +430,7 @@
   margin-bottom: 20px;
 }
 
-.featureEmoji {
+.featureIcon {
   font-size: 40px;
   line-height: 1;
 }
@@ -522,4 +522,75 @@
   .features { padding: 0 16px 60px; }
   .bottomCta { padding: 60px 24px 80px; }
   .heroCard { width: 100%; max-width: 320px; }
+}
+
+/* ?? Mobile top bar ?? */
+.mobileTopbar {
+  display: none;
+}
+
+.topbarLogo { text-decoration: none; }
+.topbarLogo em { font-style: normal; color: var(--primary); }
+.topbarCta { text-decoration: none; }
+
+@media (max-width: 768px) {
+  .mobileTopbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 10px 16px;
+    background: rgba(6, 13, 20, 0.78);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .topbarLogo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    min-height: 44px;
+  }
+
+  .topbarLogo .material-symbols-outlined {
+    font-size: 22px;
+    color: var(--primary-light);
+  }
+
+  .topbarCta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 4px 14px rgba(59, 150, 245, 0.35);
+    transition: transform 0.15s var(--ease-out), background 0.2s ease;
+  }
+
+  .topbarCta:active { transform: scale(0.96); }
+}
+
+/* Mobile rhythm: tighter hero, full-width CTAs, compact feature cards */
+@media (max-width: 640px) {
+  .hero { padding: 40px 20px 36px; gap: 32px; }
+  .heroTitle { letter-spacing: -2px; }
+  .badge { margin-bottom: 24px; }
+  .heroDesc { margin-bottom: 32px; }
+  .heroActions { gap: 12px; margin-bottom: 36px; }
+  .ctaPrimary, .ctaSecondary { width: 100%; justify-content: center; }
+  .featureCard { padding: 28px 24px; }
+  .featuresHeader { margin-bottom: 44px; }
+  .bottomCta .ctaPrimary { width: 100%; justify-content: center; }
 }
