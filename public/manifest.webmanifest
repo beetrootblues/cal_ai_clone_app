@@ -1,0 +1,22 @@
+{
+  "name": "Cal AI — AI Calorie Tracker",
+  "short_name": "Cal AI",
+  "description": "Snap a photo of your meal and AI estimates calories, protein, carbs and fat instantly.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#09090B",
+  "theme_color": "#09090B",
+  "categories": ["health", "fitness", "food"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    {
+      "src": "/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

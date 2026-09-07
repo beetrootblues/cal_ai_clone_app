@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #09090b;
+  --card: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.09);
+  --lime: #d3fd50;
+  --accent: #a3e635;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #fafafa;
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* iOS safe areas */
+.safe-top {
+  padding-top: max(env(safe-area-inset-top), 12px);
+}
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 12px);
+}
+.pb-tab {
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.btn-primary {
+  background: var(--lime);
+  color: #09090b;
+  font-weight: 700;
+  border-radius: 16px;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.btn-primary:active {
+  transform: scale(0.97);
+  filter: brightness(0.95);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+}
+
+.btn-ghost {
+  color: #fafafa;
+  font-weight: 600;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.btn-ghost:active {
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.btn-square {
+  height: 52px;
+  width: 52px;
+}
+
+input,
+textarea {
+  font-family: inherit;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@keyframes scanline {
+  0% {
+    top: 8%;
+  }
+  50% {
+    top: 88%;
+  }
+  100% {
+    top: 8%;
+  }
+}
+.scanline {
+  animation: scanline 1.8s ease-in-out infinite;
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.floaty {
+  animation: floaty 4s ease-in-out infinite;
+}

@@ -1,89 +1,60 @@
-# Cal AI — Agent Quick Reference
-> Full rules: `.agents/AGENT.md` — read that before any task.
+# Cal AI (PWA) — Agent Quick Reference
 
----
-
-## ⚠️ MANDATORY: Update AGENT.md on Every File Change
-
-**Whenever you add, delete, rename, or significantly modify any file you MUST, before marking the task complete:**
-
-1. Update the **file tree** in `.agents/AGENT.md` § 4 (add/remove the entry with a description comment).
-2. Update the **relevant table** in `.agents/AGENT.md` (§ 5 schema, § 6 PHP API, § 7 Next.js routes, § 11 Navbar, § 15 env vars).
-3. Update the **Page Map** or **PHP API Endpoints** table in this file (`AGENTS.md`) if the change affects routes or API.
-4. Update the **Last audited** date in `.agents/AGENT.md`.
-
-> See `.agents/AGENT.md` § 0 for the full lookup table of what to update per change type.
+> **Active app:** the iPhone-installable PWA at the **repo root** (Vite + React 18 + Convex + Tailwind 4).
+> The legacy Next.js/PHP app in `web/` is **frozen** — do not extend it; `.agents/AGENT.md` describes that legacy app only.
 
 ---
 
 ## TL;DR
-- **Type:** SaaS product
-- **Focus:** `web/` directory only (Next.js 14 static export)
-- **Backend:** PHP 8 scripts in `web/public/api/` — no Node.js server in production
-- **API Client:** `web/lib/phpApi.ts` — typed fetch() wrapper for all PHP endpoints
-- **DB:** MySQL via PDO (`web/public/api/db.php`)
-- **AI:** Groq Llama 4 Vision via Next.js `/api/analyze-meal` + `/api/chat`
-- **Auth:** Custom session tokens (localStorage) — no Clerk
-- **Styles:** Vanilla CSS Modules — no Tailwind
-- **Dev server:** `http://localhost:3004` (`cd web && npm run dev`)
-- **PHP API (dev):** `php -S 0.0.0.0:8000 -t web/public` — required for login + DB while hot-reloading
-- **DB (local dev):** gitignored `web/.env.local` → Hostinger MySQL `auth-db1873.hstgr.io` / `u697986122_calai`; real password lives in server `.env` (see `.agents/AGENT.md` §16)
-- **Static build:** `cd web && npm run build` → `web/out/`
-- **Local full-stack:** `php -S 0.0.0.0:8080 -t web/out/`
-- **Type check:** `cd web && npx tsc --noEmit`
-
-### 🔑 Test Credentials
-- **Email:** `demo@calai.app`
-- **Password:** `Demo1234!`
+- **Type:** PWA (Add to Home Screen on iPhone), device-scoped accounts (no passwords)
+- **Stack:** Vite + React 18 + TypeScript (strict) + Tailwind CSS 4 (`@tailwindcss/vite`) + Convex + framer-motion + lucide-react
+- **Backend:** Convex functions in `src/convex/` (schema, queries, mutations, AI actions)
+- **AI:** OpenAI `gpt-4o-mini` vision via Convex actions (`src/convex/ai.ts`) — needs `OPENAI_API_KEY` (server-side env, set in the Freebuff keys panel)
+- **Auth:** device-scoped — email stored in `localStorage`, auto-provisioned user via `api.users.startIfNeeded`
+- **PWA:** `public/manifest.webmanifest`, `public/sw.js` (app-shell cache, stale-while-revalidate), icons in `public/`
+- **Package manager:** Bun
+- **Dev:** `bun run dev` (Vite, binds 0.0.0.0, port from `$PORT` else 5173)
+- **Build:** `bun run build` → `dist/`
+- **Type check:** `bun tsc -b --noEmit`
+- **Convex codegen:** `bun convex dev --once` (generates `src/convex/_generated/`)
 
 ---
 
-## Page Map
-| Route | File | Purpose |
-|-------|------|---------|
-| `/` | `app/page.tsx` | Landing page |
-| `/login` | `app/login/page.tsx` | Login |
-| `/signup` | `app/signup/page.tsx` | Sign up |
-| `/onboarding` | `app/onboarding/page.tsx` | Post-signup profile setup |
-| `/dashboard` | `app/dashboard/page.tsx` | Today's overview |
-| `/log` | `app/log/page.tsx` | AI meal scanning + food log |
-| `/progress` | `app/progress/page.tsx` | Charts & trends |
-| `/body-scan` | `app/body-scan/page.tsx` | Weekly AI body photo analyzer |
-| `/meal-plan` | `app/meal-plan/page.tsx` | AI 7-day meal planner |
-| `/plans` | `app/plans/page.tsx` | Free / Pro / Ultra pricing |
-| `/profile` | `app/profile/page.tsx` | Goals, account, premium |
-| `/chat` | `app/chat/page.tsx` | FitBot AI coach |
+## Screens (state-based routing in `src/App.tsx`, no react-router)
+| Screen | File | Purpose |
+|--------|------|---------|
+| Landing | `src/screens/Landing.tsx` | Marketing + email start (first run) |
+| Onboarding | `src/screens/Onboarding.tsx` | Body stats → auto calorie/macro targets |
+| Home | `src/screens/Home.tsx` | Cal ring, macros, water, today's meals |
+| Scan | `src/screens/Scan.tsx` | AI photo scan + text/manual logging |
+| History | `src/screens/History.tsx` | Past meals by date |
+| Progress | `src/screens/Progress.tsx` | 14-day bars, streaks, weight, achievements |
+| Profile | `src/screens/Profile.tsx` | Targets editing, install guide, sign out |
+| InstallGuide | `src/screens/InstallGuide.tsx` | iPhone Add-to-Home-Screen steps |
 
----
+Shared components: `src/components/` (CalRing, MacroBars, BottomNav).
+Lib: `src/lib/` (health math, image compress/upload, scan types, user context).
 
-## DB Tables (MySQL via PDO in `public/api/db.php`)
-`users` · `sessions` · `meals` · `progress` · `foods` · `bodyPhotos` · `mealPlans`
+## Convex Backend (`src/convex/`)
+Tables: `users` · `meals` · `waterLogs` · `weightLogs`
 
----
-
-## PHP API Endpoints (`public/api/*.php`)
-All use `POST /api/{file}.php?action={action}` pattern.
-
-| File | Actions |
+| File | Exports |
 |------|---------|
-| `auth.php` | signUp, signIn, signOut, getSessionUser |
-| `users.php` | getById, updateProfile, updatePlan, getUserPlan, deleteAccount, exportData |
-| `meals.php` | log, byDate, remove, getTodayMeals, getRecent, range |
-| `progress.php` | logWater, upsert, getDailyProgress, getStats, range, logWeight, getAchievements |
-| `foods.php` | search, list |
-| `bodyPhotos.php` | listPhotos, savePhoto, removePhoto |
-| `mealPlans.php` | listPlans, savePlan, removePlan, togglePin |
+| `users.ts` | startIfNeeded, getByEmail, get, create, completeOnboarding, updateGoals, updateManualTargets |
+| `meals.ts` | byDate, recent, log, remove, generateUploadUrl, attachPhoto, getImageUrl |
+| `tracking.ts` | getWater, logWater, getWeights, logWeight |
+| `ai.ts` | analyzeMealPhoto, analyzeText (both `"use node"` actions, OpenAI) |
+| `http.ts` | GET `/getImageUrl?id=` storage redirect |
+| `schema.ts` | tables + indexes (by_email, by_user, by_user_date) |
 
-## Next.js AI Routes (Edge, remain server-side)
-| Route | Purpose |
-|-------|---------|
-| `/api/analyze-meal` | Groq Llama 4 Vision — meal photo → macros |
-| `/api/analyze-body` | Groq Llama 4 Vision — body photo analysis |
-| `/api/meal-plan` | Groq — AI 7-day meal plan generation |
-| `/api/chat` | Groq kimi-k2 — FitBot streaming chat |
+**Rules:** only function exports are allowed in `src/convex/` (a plain-const export fails the push). Never edit `src/convex/_generated/`.
 
----
+## Env vars
+- `VITE_CONVEX_URL` — client Convex deployment URL (injected by the platform)
+- `OPENAI_API_KEY` — server-side, used by Convex AI actions
 
-## Plans
-`free` (default) · `pro` ($9/mo) · `ultra` ($19/mo)  
-Change via: `Users.updatePlan(userId, plan)` in `phpApi.ts`
+## Conventions
+- Tailwind 4 only; custom utilities live in `src/index.css` (`.card`, `.btn-primary`, `.btn-ghost`, `.safe-top`, `.pb-tab`, `.no-scrollbar`, `.scanline`).
+- iOS safe areas via `env(safe-area-inset-*)`; tab bar in `BottomNav.tsx`.
+- Meals are keyed by device-local `dateKey` (YYYY-MM-DD, `dateKeyLocal()`).
+- Keep the app dark-themed (`#09090b` bg, `#d3fd50` lime accent).
